@@ -1,14 +1,14 @@
 package com.library.modsen.core.exceptions;
 
+import com.library.modsen.core.exceptions.body.ExceptionErrorBody;
+import com.library.modsen.core.exceptions.exceptions.CustomEntityNotFoundException;
+import com.library.modsen.core.exceptions.exceptions.CustomValidationException;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
-import test.modsen.library.core.exceptions.body.ExceptionErrorBody;
-import test.modsen.library.core.exceptions.exceptions.CustomEntityNotFoundException;
-import test.modsen.library.core.exceptions.exceptions.CustomValidationException;
 
 @Slf4j
 @ResponseBody

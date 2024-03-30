@@ -1,23 +1,26 @@
 package com.library.modsen.services;
 
+import com.library.modsen.core.dto.BookInfoDTO;
+import com.library.modsen.core.dto.CreateBookDTO;
+import com.library.modsen.core.entities.BookEntity;
+import com.library.modsen.core.enums.Status;
+import com.library.modsen.core.exceptions.exceptions.CustomEntityNotFoundException;
+import com.library.modsen.core.exceptions.exceptions.CustomValidationException;
+import com.library.modsen.repository.BookRepository;
+import com.library.modsen.services.api.IBookService;
+import lombok.extern.slf4j.Slf4j;
 import org.modelmapper.ModelMapper;
 import org.springframework.dao.DataAccessException;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
-import test.modsen.library.core.dto.BookInfoDTO;
-import test.modsen.library.core.dto.CreateBookDTO;
-import test.modsen.library.core.entities.BookEntity;
-import test.modsen.library.core.enums.Status;
-import test.modsen.library.core.exceptions.exceptions.CustomEntityNotFoundException;
-import test.modsen.library.core.exceptions.exceptions.CustomValidationException;
-import test.modsen.library.repository.BookRepository;
-import test.modsen.library.services.api.IBookService;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
 import java.util.UUID;
 
 @Service
+@Slf4j
 public class BookServiceImpl implements IBookService {
 
     private final BookRepository bookRepository;
@@ -28,13 +31,17 @@ public class BookServiceImpl implements IBookService {
         this.modelMapper = modelMapper;
     }
 
+    @Transactional(readOnly = true)
     @Override
     public Page<BookEntity> getPage(Pageable pageable) {
+        log.info("Getting all existing books");
         return this.bookRepository.findAll(pageable);
     }
 
     @Override
+    @Transactional(readOnly = true)
     public BookInfoDTO findByUuid(UUID uuid) {
+        log.info("Getting book by id: {}", uuid);
         try{
             if(this.bookRepository.findByUuid(uuid).isPresent()) {
                 return this.bookRepository.findByUuid(uuid).get();
@@ -46,7 +53,9 @@ public class BookServiceImpl implements IBookService {
     }
 
     @Override
+    @Transactional(readOnly = true)
     public BookInfoDTO findByISBN(String isbn) {
+        log.info("Getting book by isbn code: {}", isbn);
         try{
             if (this.bookRepository.findByIsbn(isbn).isPresent()) {
                 return this.bookRepository.findByIsbn(isbn).get();
@@ -58,8 +67,14 @@ public class BookServiceImpl implements IBookService {
     }
 
     @Override
+    @Transactional
     public void createBook(CreateBookDTO createBookDTO) {
+        log.info("Trying to create a new book");
+
         BookEntity bookEntity = new BookEntity();
+
+        //bookEntity = modelMapper.map(createBookDTO, BookEntity.class);
+
         bookEntity.setUuid(UUID.randomUUID());
         bookEntity.setDtCreate(LocalDateTime.now());
         bookEntity.setDtUpdate(bookEntity.getDtCreate());
@@ -72,13 +87,18 @@ public class BookServiceImpl implements IBookService {
 
         try{
             this.bookRepository.saveAndFlush(bookEntity);
+            log.info("This book was created.");
         } catch (DataAccessException e){
             throw new CustomValidationException();
         }
+
     }
 
     @Override
+    @Transactional
     public void updateBookByUUID(UUID uuid, CreateBookDTO createBookDTO) {
+        log.info("Try to update this book: {}", uuid);
+
         BookEntity bookEntity = modelMapper.map(findByUuid(uuid), BookEntity.class);
         bookEntity.setDtUpdate(LocalDateTime.now());
         bookEntity.setIsbn(createBookDTO.getIsbn());
@@ -89,6 +109,7 @@ public class BookServiceImpl implements IBookService {
 
         try{
             this.bookRepository.saveAndFlush(bookEntity);
+            log.info("This book was already updated.");
         } catch (CustomValidationException e){
             throw new CustomValidationException();
         }
@@ -97,8 +118,10 @@ public class BookServiceImpl implements IBookService {
 
     @Override
     public void deleteBookByUUID(UUID uuid) {
+        log.info("Try to delete this book: {}", uuid);
         try{
             this.bookRepository.deleteById(uuid);
+            log.info("The book was already deleted.");
         } catch (CustomEntityNotFoundException e){
             throw new CustomEntityNotFoundException(uuid);
         }

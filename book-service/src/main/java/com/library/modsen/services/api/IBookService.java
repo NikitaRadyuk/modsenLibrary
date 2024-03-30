@@ -1,11 +1,11 @@
 package com.library.modsen.services.api;
 
+import com.library.modsen.core.dto.BookInfoDTO;
+import com.library.modsen.core.dto.CreateBookDTO;
+import com.library.modsen.core.entities.BookEntity;
 import org.springframework.cloud.openfeign.FeignClient;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
-import test.modsen.library.core.dto.BookInfoDTO;
-import test.modsen.library.core.dto.CreateBookDTO;
-import test.modsen.library.core.entities.BookEntity;
 
 import java.util.UUID;
 

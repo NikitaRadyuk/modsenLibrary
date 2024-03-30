@@ -1,5 +1,9 @@
 package com.library.modsen.controller;
 
+import com.library.modsen.core.dto.BookInfoDTO;
+import com.library.modsen.core.dto.CreateBookDTO;
+import com.library.modsen.core.entities.BookEntity;
+import com.library.modsen.services.api.IBookService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.modelmapper.ModelMapper;
@@ -9,15 +13,11 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-import test.modsen.library.core.dto.BookInfoDTO;
-import test.modsen.library.core.dto.CreateBookDTO;
-import test.modsen.library.core.entities.BookEntity;
-import test.modsen.library.services.api.IBookService;
 
 import java.util.UUID;
 
 @RestController
-@RequestMapping(value ="/library")
+@RequestMapping(value ="/books")
 @RequiredArgsConstructor
 @Slf4j
 public class BookController {
@@ -35,7 +35,7 @@ public class BookController {
         return page.map(BookController::setPageObject);
     }
 
-    @GetMapping("/book/{uuid}")
+    @GetMapping("/get/{uuid}")
     @ResponseBody
     public BookInfoDTO getBook(@PathVariable("uuid") String uuid) {
         log.info("Getting book by id {}", uuid);
@@ -43,7 +43,7 @@ public class BookController {
         return modelMapper.map(bookInfoDTO, BookInfoDTO.class);
     }
 
-    @PostMapping
+    @PostMapping("/add")
     @ResponseBody
     public ResponseEntity<String> createBook(@RequestBody CreateBookDTO bookDTO) {
         log.info("Created a new book");
@@ -51,14 +51,14 @@ public class BookController {
         return new ResponseEntity<>("Книга добавлена", HttpStatus.CREATED);
     }
 
-    @GetMapping("/book/isbn/{isbn}")
+    @GetMapping("/isbn/{isbn}")
     @ResponseBody
     public BookInfoDTO getPage(@PathVariable("isbn")String isbn) {
         log.info("Getting book by isbn code {}", isbn);
         return modelMapper.map(this.bookService.findByISBN(isbn), BookInfoDTO.class);
     }
 
-    @PutMapping("/book/update/{uuid}")
+    @PutMapping("update/{uuid}")
     @ResponseBody
     public ResponseEntity<String> updateBook(
             @PathVariable("uuid") UUID uuid,
@@ -69,7 +69,7 @@ public class BookController {
         return ResponseEntity.ok("Книга обновлена");
     }
 
-    @DeleteMapping("/book/delete/{uuid}")
+    @DeleteMapping("delete/{uuid}")
     @ResponseBody
     public ResponseEntity<String> deleteBook(
             @PathVariable("uuid")UUID uuid
@@ -78,7 +78,6 @@ public class BookController {
         this.bookService.deleteBookByUUID(uuid);
         return ResponseEntity.ok("Книга удалена");
     }
-
 
     private static BookInfoDTO setPageObject(BookEntity bookEntity){
         BookInfoDTO bookInfoDTO = new BookInfoDTO();

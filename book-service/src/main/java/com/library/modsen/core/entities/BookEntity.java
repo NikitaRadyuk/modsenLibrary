@@ -1,7 +1,7 @@
 package com.library.modsen.core.entities;
 
+import com.library.modsen.core.enums.Status;
 import jakarta.persistence.*;
-import test.modsen.library.core.enums.Status;
 
 import java.time.LocalDateTime;
 import java.util.Objects;

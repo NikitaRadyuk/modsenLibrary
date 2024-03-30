@@ -1,11 +1,11 @@
 package com.library.modsen.core.dto;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
+import com.library.modsen.core.enums.Status;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import lombok.experimental.Accessors;
-import test.modsen.library.core.enums.Status;
 
 import java.util.UUID;
 
