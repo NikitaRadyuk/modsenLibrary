@@ -8,6 +8,7 @@ import org.springframework.transaction.annotation.Transactional;
 import test.modsen.libraryservice.core.dto.BookFindDTO;
 import test.modsen.libraryservice.core.dto.BookRecordDTO;
 import test.modsen.libraryservice.core.entity.BookRecordEntity;
+import test.modsen.libraryservice.core.exceptions.BookNotFoundException;
 import test.modsen.libraryservice.repository.LibraryRepository;
 import test.modsen.libraryservice.services.api.ILibraryService;
 
@@ -45,9 +46,7 @@ public class LibraryServiceImpl implements ILibraryService {
         }
         else {
             log.info("The book with {} ID already exists in the library", bookFindDTO.getBookUUID());
-            //throw new Exception();
-            //^
-            return null;
+            throw new BookNotFoundException();
         }
     }
 
@@ -64,7 +63,7 @@ public class LibraryServiceImpl implements ILibraryService {
             log.info("The book has changed");
         } else{
             log.info("The book(with ID: {}) record doesn't exists", bookRecordDTO.getBookUUID());
-            //throw new exc
+            throw new BookNotFoundException();
         }
     }
 }
