@@ -13,7 +13,7 @@ import java.util.UUID;
 @NoArgsConstructor
 public class BookRecordDTO {
     @JsonProperty(value = "book_uuid")
-    private UUID uuid;
+    private UUID bookUUID;
     @JsonProperty(value = "get_time")
     private LocalDateTime getTime;
     @JsonProperty(value = "return_time")

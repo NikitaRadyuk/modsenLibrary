@@ -10,7 +10,7 @@ import java.util.UUID;
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
-public class BookUpdateDTO {
+public class BookFindDTO {
     @JsonProperty("book_uuid")
     private UUID bookUUID;
 }
