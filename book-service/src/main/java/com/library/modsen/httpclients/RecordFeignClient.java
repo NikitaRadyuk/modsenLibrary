@@ -4,12 +4,13 @@ import org.springframework.cloud.openfeign.FeignClient;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
+import test.modsen.libraryservice.core.dto.BookFindDTO;
 
-@FeignClient(name = "records-logs", url = "${custom.feign.record-logs.url}/record")
+@FeignClient("library-service")
 public interface RecordFeignClient {
-    @PostMapping("/add")
+    @PostMapping("/newRecord")
     ResponseEntity<String> sendRequestToCreateRecord(
-            @RequestBody BookRecordDTO bookRecordDTO
+            @RequestBody BookFindDTO bookFindDTO
     );
 
 }
