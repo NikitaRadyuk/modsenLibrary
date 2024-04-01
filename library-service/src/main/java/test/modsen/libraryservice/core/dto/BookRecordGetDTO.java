@@ -18,3 +18,4 @@ public class BookRecordGetDTO {
     @JsonProperty(value = "return_time")
     private LocalDateTime returnTime;
 }
+
