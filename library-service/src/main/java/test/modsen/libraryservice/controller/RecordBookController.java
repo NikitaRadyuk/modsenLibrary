@@ -18,7 +18,7 @@ import java.util.UUID;
 
 
 @RestController
-@RequestMapping(value = "/library")
+@RequestMapping(value = "api/v1/library")
 @Slf4j
 public class RecordBookController {
     private final ILibraryService libraryService;

@@ -17,7 +17,7 @@ import org.springframework.web.bind.annotation.*;
 import java.util.UUID;
 
 @RestController
-@RequestMapping(value ="/books")
+@RequestMapping(value ="api/v1/books")
 @RequiredArgsConstructor
 @Slf4j
 public class BookController {
