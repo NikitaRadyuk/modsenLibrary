@@ -6,8 +6,8 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import test.modsen.libraryservice.core.dto.BookFindDTO;
 
-@FeignClient("library-service")
-public interface RecordFeignClient {
+@FeignClient(name = "library-service", fallback = LibraryFallback.class)
+public interface LibraryFeignClient {
     @PostMapping("/newRecord")
     ResponseEntity<String> sendRequestToCreateRecord(
             @RequestBody BookFindDTO bookFindDTO
