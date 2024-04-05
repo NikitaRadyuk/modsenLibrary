@@ -35,11 +35,11 @@ public class LibraryController {
         this.libraryService = libraryService;
     }
 
-    @GetMapping("/freeBooks")
+    @GetMapping("/availableBooks")
     @ResponseBody
     public Page<BookInfoDTO> getFreeBooksPage(@RequestParam(defaultValue = "0") Integer number,
                                                 @RequestParam(defaultValue = "10") Integer size){
-        log.info("Getting free books from library");
+        log.info("Getting available books from library");
         Pageable pageable = PageRequest.of(number, size);
         Page<BookEntity> page = this.libraryService.getFreeBooksPage(pageable);
         return page.map(LibraryController::setPageObject);
@@ -47,9 +47,9 @@ public class LibraryController {
 
     @PostMapping("/get/{uuid}")
     @ResponseBody
-    public ResponseEntity<String> getBook(@RequestBody BookReturnDTO bookRecordGetDTO){
+    public ResponseEntity<String> getBook(@RequestBody BookReturnDTO bookReturnDTO){
         log.info("Get book from library");
-        libraryService.getBookFromLibrary(bookRecordGetDTO);
+        libraryService.getBookFromLibrary(bookReturnDTO);
         return new ResponseEntity<>("Book was taken", HttpStatus.OK);
     }
 
@@ -61,7 +61,7 @@ public class LibraryController {
         return new ResponseEntity<>("Book was returned", HttpStatus.OK);
     }
 
-    @PostMapping("/newRecord")
+    @PostMapping("/add")
     @ResponseBody
     public ResponseEntity<String> createBookRecord(@RequestBody BookFindDTO bookFindDTO){
         log.info("Creating new book record in the library");
@@ -74,7 +74,7 @@ public class LibraryController {
     public ResponseEntity<String> updateBookRecord(@RequestBody BookBorrowDTO bookBorrowDTO){
         log.info("Updating book record in the library");
         libraryService.updateBook(bookBorrowDTO);
-        return new ResponseEntity<>("Book record was created", HttpStatus.OK);
+        return new ResponseEntity<>("Book record was updated", HttpStatus.OK);
     }
 
     private static BookInfoDTO setPageObject(BookEntity bookEntity){
