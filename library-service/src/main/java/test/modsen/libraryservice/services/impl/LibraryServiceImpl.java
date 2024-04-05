@@ -46,10 +46,7 @@ public class LibraryServiceImpl implements ILibraryService {
     @Transactional
     @Override
     public void getBookFromLibrary(BookReturnDTO bookRecordGetDTO){
-        BookRecordEntity bookRecord = new BookRecordEntity();
-        bookRecord.setUuid(bookRecordGetDTO.getBookUUID());
-        bookRecord.setGetTime(LocalDateTime.now());
-        bookRecord.setReturnTime(bookRecordGetDTO.getReturnTime());
+        BookRecordEntity bookRecord = modelMapper.map(bookRecordGetDTO, BookRecordEntity.class);
 
         BookEntity book = modelMapper.map(bookService.findByUuid(bookRecordGetDTO.getBookUUID()), BookEntity.class);
 
@@ -73,7 +70,6 @@ public class LibraryServiceImpl implements ILibraryService {
         bookRepository.saveAndFlush(book);
         libraryRepository.saveAndFlush(bookRecordEntity);
         log.info("The book was returned");
-
     }
 
     @Override

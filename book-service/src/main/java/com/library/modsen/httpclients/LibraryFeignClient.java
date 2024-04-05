@@ -8,7 +8,7 @@ import test.modsen.libraryservice.core.dto.BookFindDTO;
 
 @FeignClient(name = "library-service", fallback = LibraryFallback.class)
 public interface LibraryFeignClient {
-    @PostMapping("/newRecord")
+    @PostMapping("/add")
     ResponseEntity<String> sendRequestToCreateRecord(
             @RequestBody BookFindDTO bookFindDTO
     );
