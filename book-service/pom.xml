@@ -4,23 +4,22 @@
     <modelVersion>4.0.0</modelVersion>
     <parent>
         <groupId>test.modsen</groupId>
-        <artifactId>library-service</artifactId>
+        <artifactId>book-service</artifactId>
         <version>0.0.1-SNAPSHOT</version>
         <relativePath/> <!-- lookup parent from repository -->
     </parent>
 
     <groupId>com.library</groupId>
-    <artifactId>library-service</artifactId>
+    <artifactId>modsen</artifactId>
     <version>0.0.1-SNAPSHOT</version>
-    <name>library-service</name>
-    <description>library-service</description>
+    <name>books-service</name>
+    <description>book-service</description>
 
     <properties>
         <java.version>17</java.version>
     </properties>
 
     <dependencies>
-
         <dependency>
             <groupId>test.modsen</groupId>
             <artifactId>book-service</artifactId>
@@ -43,6 +42,11 @@
             <artifactId>spring-boot-starter-data-jpa</artifactId>
         </dependency>
 
+        <dependency>
+            <groupId>org.springframework.cloud</groupId>
+            <artifactId>spring-cloud-starter-openfeign</artifactId>
+            <version>4.0.6</version>
+        </dependency>
     </dependencies>
 
     <build>
