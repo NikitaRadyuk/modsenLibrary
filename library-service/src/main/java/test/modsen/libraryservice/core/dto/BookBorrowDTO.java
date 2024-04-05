@@ -11,11 +11,11 @@ import java.util.UUID;
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
-public class BookRecordGetDTO {
-
+public class BookBorrowDTO {
     @JsonProperty(value = "book_uuid")
     private UUID bookUUID;
+    @JsonProperty(value = "get_time")
+    private LocalDateTime getTime;
     @JsonProperty(value = "return_time")
     private LocalDateTime returnTime;
 }
-
