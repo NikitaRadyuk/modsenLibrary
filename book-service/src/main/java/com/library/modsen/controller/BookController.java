@@ -29,11 +29,9 @@ import java.util.UUID;
 @Slf4j
 public class BookController {
     private final IBookService bookService;
-    private final ModelMapper modelMapper;
 
-    public BookController(IBookService bookService, ModelMapper modelMapper) {
+    public BookController(IBookService bookService) {
         this.bookService = bookService;
-        this.modelMapper = modelMapper;
     }
 
 
@@ -52,8 +50,7 @@ public class BookController {
     @ResponseBody
     public BookInfoDTO getBook(@PathVariable("uuid") String uuid) {
         log.info("Getting book by id {}", uuid);
-        BookInfoDTO bookInfoDTO = this.bookService.findByUuid(UUID.fromString(uuid));
-        return modelMapper.map(bookInfoDTO, BookInfoDTO.class);
+        return this.bookService.findByUuid(UUID.fromString(uuid));
     }
 
     @PostMapping("/add")
@@ -68,7 +65,7 @@ public class BookController {
     @ResponseBody
     public BookInfoDTO getPage(@PathVariable("isbn")String isbn) {
         log.info("Getting book by isbn code {}", isbn);
-        return modelMapper.map(this.bookService.findByISBN(isbn), BookInfoDTO.class);
+        return this.bookService.findByISBN(isbn);
     }
 
     @PutMapping("update/{uuid}")
