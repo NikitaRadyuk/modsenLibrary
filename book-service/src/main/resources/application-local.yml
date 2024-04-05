@@ -22,9 +22,3 @@ spring:
 
   server:
     port: 8080
-
-  springdoc:
-    api-docs:
-      path: /book/v3/api-docs
-    swagger-ui:
-      path: /book/swagger-ui.html
