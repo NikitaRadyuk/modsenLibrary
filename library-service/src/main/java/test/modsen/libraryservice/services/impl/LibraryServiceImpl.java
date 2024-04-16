@@ -11,8 +11,8 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import test.modsen.libraryservice.core.dto.BookFindDTO;
-import test.modsen.libraryservice.core.dto.BookRecordDTO;
-import test.modsen.libraryservice.core.dto.BookRecordGetDTO;
+import test.modsen.libraryservice.core.dto.BookBorrowDTO;
+import test.modsen.libraryservice.core.dto.BookReturnDTO;
 import test.modsen.libraryservice.core.entity.BookRecordEntity;
 import test.modsen.libraryservice.core.exceptions.BookNotFoundException;
 import test.modsen.libraryservice.repository.LibraryRepository;
@@ -45,11 +45,8 @@ public class LibraryServiceImpl implements ILibraryService {
 
     @Transactional
     @Override
-    public void getBookFromLibrary(BookRecordGetDTO bookRecordGetDTO){
-        BookRecordEntity bookRecord = new BookRecordEntity();
-        bookRecord.setUuid(bookRecordGetDTO.getBookUUID());
-        bookRecord.setGetTime(LocalDateTime.now());
-        bookRecord.setReturnTime(bookRecordGetDTO.getReturnTime());
+    public void getBookFromLibrary(BookReturnDTO bookRecordGetDTO){
+        BookRecordEntity bookRecord = modelMapper.map(bookRecordGetDTO, BookRecordEntity.class);
 
         BookEntity book = modelMapper.map(bookService.findByUuid(bookRecordGetDTO.getBookUUID()), BookEntity.class);
 
@@ -73,12 +70,11 @@ public class LibraryServiceImpl implements ILibraryService {
         bookRepository.saveAndFlush(book);
         libraryRepository.saveAndFlush(bookRecordEntity);
         log.info("The book was returned");
-
     }
 
     @Override
     @Transactional
-    public BookRecordDTO createBookRecord(BookFindDTO bookFindDTO) {
+    public void createBookRecord(BookFindDTO bookFindDTO) {
         if(libraryRepository.existsById(bookFindDTO.getBookUUID())){
         log.info("Adding new book to library");
         BookRecordEntity bookRecord = new BookRecordEntity();
@@ -87,8 +83,6 @@ public class LibraryServiceImpl implements ILibraryService {
         bookRecord.setReturnTime(null);
 
         libraryRepository.saveAndFlush(bookRecord);
-        BookRecordDTO bookRecordDTO = modelMapper.map(bookRecord, BookRecordDTO.class);
-        return bookRecordDTO;
         }
         else {
             log.info("The book with {} ID already exists in the library", bookFindDTO.getBookUUID());
@@ -97,18 +91,18 @@ public class LibraryServiceImpl implements ILibraryService {
     }
 
     @Override
-    public void updateBook(BookRecordDTO bookRecordDTO) {
-        log.info("Trying to update book with id: {} record", bookRecordDTO.getBookUUID());
+    public void updateBook(BookBorrowDTO bookBorrowDTO) {
+        log.info("Trying to update book with id: {} record", bookBorrowDTO.getBookUUID());
 
-        if(libraryRepository.existsById(bookRecordDTO.getBookUUID())) {
-            BookRecordEntity bookRecord = libraryRepository.getBookRecordEntityByUuid(bookRecordDTO.getBookUUID());
-            bookRecord.setReturnTime(bookRecordDTO.getReturnTime());
-            bookRecord.setGetTime(bookRecordDTO.getGetTime());
+        if(libraryRepository.existsById(bookBorrowDTO.getBookUUID())) {
+            BookRecordEntity bookRecord = libraryRepository.getBookRecordEntityByUuid(bookBorrowDTO.getBookUUID());
+            bookRecord.setReturnTime(bookBorrowDTO.getReturnTime());
+            bookRecord.setGetTime(bookBorrowDTO.getGetTime());
 
             libraryRepository.saveAndFlush(bookRecord);
             log.info("The book has changed");
         } else{
-            log.info("The book(with ID: {}) record doesn't exists", bookRecordDTO.getBookUUID());
+            log.info("The book(with ID: {}) record doesn't exists", bookBorrowDTO.getBookUUID());
             throw new BookNotFoundException();
         }
     }

@@ -1,0 +1,63 @@
+version: '3.8'
+services:
+  service-registry:
+    build:
+      context: ./service-registry
+      dockerfile: Dockerfile
+    container_name: service-registry
+    ports:
+      - '8761:8761'
+    environment:
+      - SPRING_PROFILES_ACTIVE=docker
+
+  postgres-books:
+    container_name: postgres-books
+    image: postgres
+    ports:
+      - '5433:5433'
+    environment:
+      - POSTGRES_DB=modsen_library
+      - POSTGRES_USER=postgres
+      - PGDATA=/data/postgres
+      - POSTGRES_PASSWORD=postgres
+    volumes:
+      - ./postgres-books:/data/postgres
+    command: -p 5431
+    restart: always
+
+  postgres-library:
+    container_name: postgres-library
+    image: postgres
+    expose:
+      - '5433'
+    ports:
+      - '5433:5433'
+    environment:
+      - POSTGRES_DB=modsen_library
+      - POSTGRES_USER=postgres
+      - PGDATA=/data/postgres
+      - POSTGRES_PASSWORD=postgres
+    volumes:
+      - ./postgres-library:/data/postgres
+    command: -p 5433
+    restart: always
+
+  book-service:
+    build:
+      context: ./book-service
+      dockerfile: Dockerfile
+    depends_on:
+      - postgres-books
+      - service-registry
+    environment:
+      - SPRING_PROFILES_ACTIVE=docker
+      - SPRING_DATASOURCE_URL=jdbc:postgresql://postgres-books:5433/books
+
+  library-service:
+    build: library-service
+    depends_on:
+      - postgres-library
+      - library-server
+    environment:
+      - SPRING_PROFILES_ACTIVE=docker
+      - SPRING_DATASOURCE_URL=jdbc:postgresql://postgres-library:5432/library

@@ -4,15 +4,15 @@ import com.library.modsen.core.entities.BookEntity;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import test.modsen.libraryservice.core.dto.BookFindDTO;
-import test.modsen.libraryservice.core.dto.BookRecordDTO;
-import test.modsen.libraryservice.core.dto.BookRecordGetDTO;
+import test.modsen.libraryservice.core.dto.BookBorrowDTO;
+import test.modsen.libraryservice.core.dto.BookReturnDTO;
 
 import java.util.UUID;
 
 public interface ILibraryService{
     Page<BookEntity> getFreeBooksPage(Pageable pageable);
-    BookRecordDTO createBookRecord(BookFindDTO bookFindDTO);
-    void updateBook(BookRecordDTO bookRecordDTO);
-    void getBookFromLibrary(BookRecordGetDTO bookRecordGetDTO);
+    void createBookRecord(BookFindDTO bookFindDTO);
+    void updateBook(BookBorrowDTO bookBorrowDTO);
+    void getBookFromLibrary(BookReturnDTO bookRecordGetDTO);
     void returnBookToLibrary(UUID bookUUID);
 }

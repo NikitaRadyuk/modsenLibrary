@@ -4,7 +4,6 @@ import com.library.modsen.core.dto.BookInfoDTO;
 import com.library.modsen.core.dto.CreateBookDTO;
 import com.library.modsen.core.entities.BookEntity;
 import com.library.modsen.services.api.IBookService;
-import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.modelmapper.ModelMapper;
 import org.springframework.data.domain.Page;
@@ -12,17 +11,29 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.PutMapping;
+import org.springframework.web.bind.annotation.DeleteMapping;
 
 import java.util.UUID;
 
 @RestController
-@RequestMapping(value ="/books")
-@RequiredArgsConstructor
+@RequestMapping(value ="api/v1/books")
 @Slf4j
 public class BookController {
-    private IBookService bookService;
-    private final ModelMapper modelMapper;
+    private final IBookService bookService;
+
+    public BookController(IBookService bookService) {
+        this.bookService = bookService;
+    }
+
 
     @GetMapping
     @ResponseBody
@@ -39,8 +50,7 @@ public class BookController {
     @ResponseBody
     public BookInfoDTO getBook(@PathVariable("uuid") String uuid) {
         log.info("Getting book by id {}", uuid);
-        BookInfoDTO bookInfoDTO = this.bookService.findByUuid(UUID.fromString(uuid));
-        return modelMapper.map(bookInfoDTO, BookInfoDTO.class);
+        return this.bookService.findByUuid(UUID.fromString(uuid));
     }
 
     @PostMapping("/add")
@@ -55,7 +65,7 @@ public class BookController {
     @ResponseBody
     public BookInfoDTO getPage(@PathVariable("isbn")String isbn) {
         log.info("Getting book by isbn code {}", isbn);
-        return modelMapper.map(this.bookService.findByISBN(isbn), BookInfoDTO.class);
+        return this.bookService.findByISBN(isbn);
     }
 
     @PutMapping("update/{uuid}")

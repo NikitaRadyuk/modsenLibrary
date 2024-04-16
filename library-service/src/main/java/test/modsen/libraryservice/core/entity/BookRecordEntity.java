@@ -1,6 +1,9 @@
 package test.modsen.libraryservice.core.entity;
 
-import jakarta.persistence.*;
+import jakarta.persistence.Entity;
+import jakarta.persistence.Table;
+import jakarta.persistence.Id;
+import jakarta.persistence.Column;
 
 import java.time.LocalDateTime;
 import java.util.Objects;
@@ -10,7 +13,7 @@ import java.util.UUID;
 @Table(schema = "modsen_library", name = "book_record")
 public class BookRecordEntity {
     @Id
-    private UUID uuid;   //record uuid
+    private UUID uuid;
     @Column(name = "book_uuid")
     private UUID bookUuid;
     @Column(name = "get_time")

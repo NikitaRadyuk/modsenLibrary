@@ -73,8 +73,6 @@ public class BookServiceImpl implements IBookService {
 
         BookEntity bookEntity = new BookEntity();
 
-        //bookEntity = modelMapper.map(createBookDTO, BookEntity.class);
-
         bookEntity.setUuid(UUID.randomUUID());
         bookEntity.setDtCreate(LocalDateTime.now());
         bookEntity.setDtUpdate(bookEntity.getDtCreate());
