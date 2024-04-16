@@ -1,5 +1,6 @@
 package test.modsen.libraryservice.services.impl;
 
+import com.library.modsen.core.dto.BookInfoDTO;
 import com.library.modsen.core.entities.BookEntity;
 import com.library.modsen.core.enums.Status;
 import com.library.modsen.repository.BookRepository;
@@ -38,9 +39,10 @@ public class LibraryServiceImpl implements ILibraryService {
 
     @Transactional(readOnly = true)
     @Override
-    public Page<BookEntity> getFreeBooksPage(Pageable pageable) {
+    public Page<BookInfoDTO> getFreeBooksPage(Pageable pageable) {
         log.info("Getting all free books");
-        return libraryRepository.getFreeBookRecordEntities(pageable);
+        Page<BookEntity> page = libraryRepository.getFreeBookRecordEntities(pageable);
+        return page.map(LibraryServiceImpl::setPageObject);
     }
 
     @Transactional
@@ -105,5 +107,17 @@ public class LibraryServiceImpl implements ILibraryService {
             log.info("The book(with ID: {}) record doesn't exists", bookBorrowDTO.getBookUUID());
             throw new BookNotFoundException();
         }
+    }
+
+    private static BookInfoDTO setPageObject(BookEntity bookEntity){
+        BookInfoDTO bookInfoDTO = new BookInfoDTO();
+        bookInfoDTO.setStatus(bookEntity.getStatus())
+                .setDescription(bookEntity.getDescription())
+                .setIsbn(bookEntity.getIsbn())
+                .setUuid(bookEntity.getUuid())
+                .setAuthor(bookEntity.getAuthor())
+                .setGenre(bookEntity.getGenre())
+                .setTitle(bookEntity.getTitle());
+        return bookInfoDTO;
     }
 }

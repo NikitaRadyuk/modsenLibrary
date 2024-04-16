@@ -6,7 +6,6 @@ import com.library.modsen.core.entities.BookEntity;
 import com.library.modsen.services.api.IBookService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.modelmapper.ModelMapper;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
@@ -14,7 +13,6 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -38,8 +36,8 @@ public class BookController {
     ) {
         log.info("Getting all books");
         Pageable pageable = PageRequest.of(number, size);
-        Page<BookEntity> page = this.bookService.getPage(pageable);
-        return page.map(BookController::setPageObject);
+        Page<BookInfoDTO> page = this.bookService.getPage(pageable);
+        return page;
     }
 
     @GetMapping("/{uuid}")
@@ -80,15 +78,5 @@ public class BookController {
         return ResponseEntity.ok("Книга удалена");
     }
 
-    private static BookInfoDTO setPageObject(BookEntity bookEntity){
-        BookInfoDTO bookInfoDTO = new BookInfoDTO();
-        bookInfoDTO.setStatus(bookEntity.getStatus())
-                        .setDescription(bookEntity.getDescription())
-                .setIsbn(bookEntity.getIsbn())
-                .setUuid(bookEntity.getUuid())
-                .setAuthor(bookEntity.getAuthor())
-                .setGenre(bookEntity.getGenre())
-                .setTitle(bookEntity.getTitle());
-        return bookInfoDTO;
-    }
+
 }

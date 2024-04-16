@@ -33,9 +33,10 @@ public class BookServiceImpl implements IBookService {
 
     @Transactional(readOnly = true)
     @Override
-    public Page<BookEntity> getPage(Pageable pageable) {
+    public Page<BookInfoDTO> getPage(Pageable pageable) {
         log.info("Getting all existing books");
-        return this.bookRepository.findAll(pageable);
+        Page<BookEntity> page = this.bookRepository.findAll(pageable);
+        return page.map(BookServiceImpl::setPageObjects);
     }
 
     @Override
@@ -123,5 +124,17 @@ public class BookServiceImpl implements IBookService {
         } catch (CustomEntityNotFoundException e){
             throw new CustomEntityNotFoundException(uuid);
         }
+    }
+
+    private static BookInfoDTO setPageObjects(BookEntity bookEntity){
+        BookInfoDTO book = new BookInfoDTO();
+        book.setStatus(bookEntity.getStatus());
+        book.setDescription(bookEntity.getDescription());
+        book.setIsbn(bookEntity.getIsbn());
+        book.setUuid(bookEntity.getUuid());
+        book.setAuthor(bookEntity.getAuthor());
+        book.setGenre(bookEntity.getGenre());
+        book.setTitle(bookEntity.getTitle());
+        return book;
     }
 }

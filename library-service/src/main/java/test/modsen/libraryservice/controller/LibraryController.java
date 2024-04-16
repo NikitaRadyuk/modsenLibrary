@@ -37,8 +37,8 @@ public class LibraryController {
                                                 @RequestParam(defaultValue = "10") Integer size){
         log.info("Getting available books from library");
         Pageable pageable = PageRequest.of(number, size);
-        Page<BookEntity> page = this.libraryService.getFreeBooksPage(pageable);
-        return page.map(LibraryController::setPageObject);
+        Page<BookInfoDTO> page = this.libraryService.getFreeBooksPage(pageable);
+        return page;
     }
 
     @PostMapping("/books/{uuid}")
@@ -69,15 +69,4 @@ public class LibraryController {
         return new ResponseEntity<>("Book record was updated", HttpStatus.OK);
     }
 
-    private static BookInfoDTO setPageObject(BookEntity bookEntity){
-        BookInfoDTO bookInfoDTO = new BookInfoDTO();
-        bookInfoDTO.setStatus(bookEntity.getStatus())
-                .setDescription(bookEntity.getDescription())
-                .setIsbn(bookEntity.getIsbn())
-                .setUuid(bookEntity.getUuid())
-                .setAuthor(bookEntity.getAuthor())
-                .setGenre(bookEntity.getGenre())
-                .setTitle(bookEntity.getTitle());
-        return bookInfoDTO;
-    }
 }
