@@ -17,6 +17,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
+import java.util.Optional;
 import java.util.UUID;
 
 @Service
@@ -43,28 +44,30 @@ public class BookServiceImpl implements IBookService {
     @Transactional(readOnly = true)
     public BookInfoDTO findByUuid(UUID uuid) {
         log.info("Getting book by id: {}", uuid);
-        try{
-            if(this.bookRepository.findByUuid(uuid).isPresent()) {
-                return this.bookRepository.findByUuid(uuid).get();
-            } else throw new CustomEntityNotFoundException(uuid);
-        }
-        catch (CustomValidationException e){
-            throw new CustomValidationException();
-        }
+
+        Optional<BookEntity> optionalBookEntity = this.bookRepository.findByUuid(uuid);
+
+        optionalBookEntity.ifPresent(
+                bookEntity -> {
+                    this.bookRepository.findByUuid(uuid).orElseThrow(() -> new CustomEntityNotFoundException("Book not found"));
+                }
+        );
+        return modelMapper.map(optionalBookEntity.get(), BookInfoDTO.class);
     }
 
     @Override
     @Transactional(readOnly = true)
     public BookInfoDTO findByISBN(String isbn) {
         log.info("Getting book by isbn code: {}", isbn);
-        try{
-            if (this.bookRepository.findByIsbn(isbn).isPresent()) {
-                return this.bookRepository.findByIsbn(isbn).get();
-            } else throw new CustomEntityNotFoundException(isbn);
-        }
-        catch (CustomValidationException e){
-            throw new CustomValidationException();
-        }
+
+        Optional<BookEntity> optionalBookEntity = this.bookRepository.findByIsbn(isbn);
+
+        optionalBookEntity.ifPresent(
+                bookEntity -> {
+                    this.bookRepository.findByIsbn(isbn).orElseThrow(() -> new CustomEntityNotFoundException("Book not found"));
+                }
+        );
+        return modelMapper.map(optionalBookEntity.get(), BookInfoDTO.class);
     }
 
     @Override
