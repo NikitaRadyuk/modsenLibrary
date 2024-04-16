@@ -85,7 +85,7 @@ public class BookServiceImpl implements IBookService {
         bookEntity.setStatus(Status.FREE);
 
         try{
-            this.bookRepository.saveAndFlush(bookEntity);
+            this.bookRepository.save(bookEntity);
             log.info("This book was created.");
         } catch (DataAccessException e){
             throw new CustomValidationException();
@@ -107,7 +107,7 @@ public class BookServiceImpl implements IBookService {
         bookEntity.setDescription(createBookDTO.getDescription());
 
         try{
-            this.bookRepository.saveAndFlush(bookEntity);
+            this.bookRepository.save(bookEntity);
             log.info("This book was already updated.");
         } catch (CustomValidationException e){
             throw new CustomValidationException();
@@ -115,6 +115,7 @@ public class BookServiceImpl implements IBookService {
 
     }
 
+    @Transactional
     @Override
     public void deleteBookByUUID(UUID uuid) {
         log.info("Try to delete this book: {}", uuid);

@@ -54,11 +54,12 @@ public class LibraryServiceImpl implements ILibraryService {
 
         book.setStatus(Status.BUSY);
 
-        bookRepository.saveAndFlush(book);
-        libraryRepository.saveAndFlush(bookRecord);
+        bookRepository.save(book);
+        libraryRepository.save(bookRecord);
         log.info("The book was taken");
     }
 
+    @Transactional
     @Override
     public void returnBookToLibrary(UUID bookUUID) {
         BookRecordEntity bookRecordEntity = new BookRecordEntity();
@@ -69,8 +70,8 @@ public class LibraryServiceImpl implements ILibraryService {
 
         book.setStatus(Status.BUSY);
 
-        bookRepository.saveAndFlush(book);
-        libraryRepository.saveAndFlush(bookRecordEntity);
+        bookRepository.save(book);
+        libraryRepository.save(bookRecordEntity);
         log.info("The book was returned");
     }
 
@@ -84,7 +85,7 @@ public class LibraryServiceImpl implements ILibraryService {
         bookRecord.setGetTime(null);
         bookRecord.setReturnTime(null);
 
-        libraryRepository.saveAndFlush(bookRecord);
+        libraryRepository.save(bookRecord);
         }
         else {
             log.info("The book with {} ID already exists in the library", bookFindDTO.getBookUUID());
@@ -92,6 +93,7 @@ public class LibraryServiceImpl implements ILibraryService {
         }
     }
 
+    @Transactional
     @Override
     public void updateBook(BookBorrowDTO bookBorrowDTO) {
         log.info("Trying to update book with id: {} record", bookBorrowDTO.getBookUUID());
@@ -101,7 +103,7 @@ public class LibraryServiceImpl implements ILibraryService {
             bookRecord.setReturnTime(bookBorrowDTO.getReturnTime());
             bookRecord.setGetTime(bookBorrowDTO.getGetTime());
 
-            libraryRepository.saveAndFlush(bookRecord);
+            libraryRepository.save(bookRecord);
             log.info("The book has changed");
         } else{
             log.info("The book(with ID: {}) record doesn't exists", bookBorrowDTO.getBookUUID());
