@@ -17,6 +17,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
+import java.util.Optional;
 import java.util.UUID;
 
 @Service
@@ -33,37 +34,40 @@ public class BookServiceImpl implements IBookService {
 
     @Transactional(readOnly = true)
     @Override
-    public Page<BookEntity> getPage(Pageable pageable) {
+    public Page<BookInfoDTO> getPage(Pageable pageable) {
         log.info("Getting all existing books");
-        return this.bookRepository.findAll(pageable);
+        Page<BookEntity> page = this.bookRepository.findAll(pageable);
+        return page.map(BookServiceImpl::setPageObjects);
     }
 
     @Override
     @Transactional(readOnly = true)
     public BookInfoDTO findByUuid(UUID uuid) {
         log.info("Getting book by id: {}", uuid);
-        try{
-            if(this.bookRepository.findByUuid(uuid).isPresent()) {
-                return this.bookRepository.findByUuid(uuid).get();
-            } else throw new CustomEntityNotFoundException(uuid);
-        }
-        catch (CustomValidationException e){
-            throw new CustomValidationException();
-        }
+
+        Optional<BookEntity> optionalBookEntity = this.bookRepository.findByUuid(uuid);
+
+        optionalBookEntity.ifPresent(
+                bookEntity -> {
+                    this.bookRepository.findByUuid(uuid).orElseThrow(() -> new CustomEntityNotFoundException("Book not found"));
+                }
+        );
+        return modelMapper.map(optionalBookEntity.get(), BookInfoDTO.class);
     }
 
     @Override
     @Transactional(readOnly = true)
     public BookInfoDTO findByISBN(String isbn) {
         log.info("Getting book by isbn code: {}", isbn);
-        try{
-            if (this.bookRepository.findByIsbn(isbn).isPresent()) {
-                return this.bookRepository.findByIsbn(isbn).get();
-            } else throw new CustomEntityNotFoundException(isbn);
-        }
-        catch (CustomValidationException e){
-            throw new CustomValidationException();
-        }
+
+        Optional<BookEntity> optionalBookEntity = this.bookRepository.findByIsbn(isbn);
+
+        optionalBookEntity.ifPresent(
+                bookEntity -> {
+                    this.bookRepository.findByIsbn(isbn).orElseThrow(() -> new CustomEntityNotFoundException("Book not found"));
+                }
+        );
+        return modelMapper.map(optionalBookEntity.get(), BookInfoDTO.class);
     }
 
     @Override
@@ -84,7 +88,7 @@ public class BookServiceImpl implements IBookService {
         bookEntity.setStatus(Status.FREE);
 
         try{
-            this.bookRepository.saveAndFlush(bookEntity);
+            this.bookRepository.save(bookEntity);
             log.info("This book was created.");
         } catch (DataAccessException e){
             throw new CustomValidationException();
@@ -106,7 +110,7 @@ public class BookServiceImpl implements IBookService {
         bookEntity.setDescription(createBookDTO.getDescription());
 
         try{
-            this.bookRepository.saveAndFlush(bookEntity);
+            this.bookRepository.save(bookEntity);
             log.info("This book was already updated.");
         } catch (CustomValidationException e){
             throw new CustomValidationException();
@@ -114,6 +118,7 @@ public class BookServiceImpl implements IBookService {
 
     }
 
+    @Transactional
     @Override
     public void deleteBookByUUID(UUID uuid) {
         log.info("Try to delete this book: {}", uuid);
@@ -123,5 +128,17 @@ public class BookServiceImpl implements IBookService {
         } catch (CustomEntityNotFoundException e){
             throw new CustomEntityNotFoundException(uuid);
         }
+    }
+
+    private static BookInfoDTO setPageObjects(BookEntity bookEntity){
+        BookInfoDTO book = new BookInfoDTO();
+        book.setStatus(bookEntity.getStatus());
+        book.setDescription(bookEntity.getDescription());
+        book.setIsbn(bookEntity.getIsbn());
+        book.setUuid(bookEntity.getUuid());
+        book.setAuthor(bookEntity.getAuthor());
+        book.setGenre(bookEntity.getGenre());
+        book.setTitle(bookEntity.getTitle());
+        return book;
     }
 }

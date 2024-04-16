@@ -15,6 +15,13 @@ spring:
       hibernate:
         dialect: org.hibernate.dialect.PostgreSQLDialect
 
+  app:
+    api:
+      feign:
+        clients:
+          library:
+            name: library-service
+
   eureka:
     client:
       serviceUrl:

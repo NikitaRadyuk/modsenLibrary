@@ -17,13 +17,15 @@
 
     <properties>
         <java.version>17</java.version>
+        <springdoc.version>2.0.2</springdoc.version>
+        <book-service.version>0.0.1-SNAPSHOT</book-service.version>
     </properties>
 
     <dependencies>
         <dependency>
             <groupId>test.modsen</groupId>
             <artifactId>book-service</artifactId>
-            <version>0.0.1-SNAPSHOT</version>
+            <version>${book-service.version}</version>
         </dependency>
 
         <dependency>
@@ -45,7 +47,7 @@
         <dependency>
             <groupId>org.springdoc</groupId>
             <artifactId>springdoc-openapi-starter-webmvc-ui</artifactId>
-            <version>2.0.2</version>
+            <version>${springdoc.version}</version>
         </dependency>
 
         <dependency>

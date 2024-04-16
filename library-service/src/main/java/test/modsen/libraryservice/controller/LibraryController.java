@@ -2,6 +2,7 @@ package test.modsen.libraryservice.controller;
 
 import com.library.modsen.core.dto.BookInfoDTO;
 import com.library.modsen.core.entities.BookEntity;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -11,7 +12,6 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -26,27 +26,22 @@ import java.util.UUID;
 
 
 @RestController
+@RequiredArgsConstructor
 @RequestMapping(value = "api/v1/library")
 @Slf4j
 public class LibraryController {
     private final ILibraryService libraryService;
 
-    public LibraryController(ILibraryService libraryService) {
-        this.libraryService = libraryService;
-    }
-
-    @GetMapping("/availableBooks")
-    @ResponseBody
+    @GetMapping("/available-books")
     public Page<BookInfoDTO> getFreeBooksPage(@RequestParam(defaultValue = "0") Integer number,
                                                 @RequestParam(defaultValue = "10") Integer size){
         log.info("Getting available books from library");
         Pageable pageable = PageRequest.of(number, size);
-        Page<BookEntity> page = this.libraryService.getFreeBooksPage(pageable);
-        return page.map(LibraryController::setPageObject);
+        Page<BookInfoDTO> page = this.libraryService.getFreeBooksPage(pageable);
+        return page;
     }
 
-    @PostMapping("/get/{uuid}")
-    @ResponseBody
+    @PostMapping("/books/{uuid}")
     public ResponseEntity<String> getBook(@RequestBody BookReturnDTO bookReturnDTO){
         log.info("Get book from library");
         libraryService.getBookFromLibrary(bookReturnDTO);
@@ -54,7 +49,6 @@ public class LibraryController {
     }
 
     @PostMapping("/return/{uuid}")
-    @ResponseBody
     public ResponseEntity<String> returnBook(@PathVariable String uuid){
         log.info("Return book to library");
         libraryService.returnBookToLibrary(UUID.fromString(uuid));
@@ -62,30 +56,17 @@ public class LibraryController {
     }
 
     @PostMapping("/add")
-    @ResponseBody
     public ResponseEntity<String> createBookRecord(@RequestBody BookFindDTO bookFindDTO){
         log.info("Creating new book record in the library");
         libraryService.createBookRecord(bookFindDTO);
         return new ResponseEntity<>("Book record was created", HttpStatus.OK);
     }
 
-    @PutMapping("/update")
-    @ResponseBody
+    @PutMapping("/books")
     public ResponseEntity<String> updateBookRecord(@RequestBody BookBorrowDTO bookBorrowDTO){
         log.info("Updating book record in the library");
         libraryService.updateBook(bookBorrowDTO);
         return new ResponseEntity<>("Book record was updated", HttpStatus.OK);
     }
 
-    private static BookInfoDTO setPageObject(BookEntity bookEntity){
-        BookInfoDTO bookInfoDTO = new BookInfoDTO();
-        bookInfoDTO.setStatus(bookEntity.getStatus())
-                .setDescription(bookEntity.getDescription())
-                .setIsbn(bookEntity.getIsbn())
-                .setUuid(bookEntity.getUuid())
-                .setAuthor(bookEntity.getAuthor())
-                .setGenre(bookEntity.getGenre())
-                .setTitle(bookEntity.getTitle());
-        return bookInfoDTO;
-    }
 }
